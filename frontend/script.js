@@ -41,3 +41,40 @@ document.getElementById("product-form").addEventListener("submit", function(even
     // Limpar os campos após o envio
     document.getElementById("product-form").reset();
 });
+
+function carregarProdutos() {
+    fetch("http://127.0.0.1:5000/produtos")
+        .then(response => response.json())
+        .then(data => {
+            const tabela = document.querySelector("#tabela-produtos tbody");
+            tabela.innerHTML = ""; // limpa a tabela
+
+            if (Array.isArray(data)) {
+                data.forEach(produto => {
+                    const row = `
+                        <tr>
+                            <td>${produto.nome}</td>
+                            <td>${produto.descricao}</td>
+                            <td>${produto.quantidade}</td>
+                            <td>R$ ${produto.preco.toFixed(2)}</td>
+                        </tr>
+                    `;
+                    tabela.innerHTML += row;
+                });
+            } else {
+                console.error("Erro ao carregar produtos:", data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao buscar produtos:", error);
+        });
+}
+
+document.getElementById("mostrarTabelaBtn").addEventListener("click", function () {
+    document.getElementById("tabelaCard").classList.remove("d-none");
+    carregarProdutos();
+});
+
+document.getElementById("fecharTabelaBtn").addEventListener("click", function () {
+    document.getElementById("tabelaCard").classList.add("d-none");
+});
